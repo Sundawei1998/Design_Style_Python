@@ -85,8 +85,8 @@ class ProtectedProxy(Subject):
 print(VirtualProxy("代理模式创建的超级无敌大文件.txt").set_content("哎呀，你干嘛～～"))
 print(VirtualProxy("代理模式创建的超级无敌大文件.txt").get_content())
 
-print(ProtectedProxy("代理模式创建的超级无敌大文件.txt").set_content())
 print(ProtectedProxy("代理模式创建的超级无敌大文件.txt").get_content())
+print(ProtectedProxy("代理模式创建的超级无敌大文件.txt").set_content())
 
 """
 优点:
