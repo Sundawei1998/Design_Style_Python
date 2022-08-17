@@ -11,11 +11,17 @@
 的时候，可以用虚代理把原本的创建过程包起来，不要还没调用就加载到内存
 保护代理:控制对原始对象的访问，用于对象有不同访问权限时，类似vpn.
 
+角色:
+抽象实体(Subject)
+实体(RealSubject)
+代理(Proxy)
+
 """
 
 from abc import ABCMeta, abstractmethod
 
 
+# 抽象实体
 class Subject(metaclass=ABCMeta):
     @abstractmethod
     def get_content(self):
@@ -25,16 +31,66 @@ class Subject(metaclass=ABCMeta):
     def set_content(self, content):
         pass
 
+
+# 实体
 class RealSubject(Subject):
     def __init__(self, filename):
         self.filename = filename
-        f = open(filename, "a",encoding="utf-8")
+        f = open(filename, "r", encoding="utf-8")  # 我们自己不要这样写，一创建实例就把大文件读到内存
         self.content = f.read()
         f.close()
+
     def get_content(self):
         return self.content
-    def set_content(self,content):
-        f =open(self.filename, "w",encoding="utf-8")
+
+    def set_content(self, content):
+        f = open(self.filename, "w", encoding="utf-8")
         f.write(content)
         f.close()
-RealSubject("aa.txt")
+
+
+# 代理(虚代理，让他不要加载那么大文件，可以用在无图模式上)
+class VirtualProxy(Subject):
+    def __init__(self, filename):
+        self.filename = filename
+        self.subj = None
+
+    def get_content(self):
+        if not self.subj:
+            self.subj = RealSubject(self.filename)
+        return self.subj.get_content()
+
+    def set_content(self, content):
+        if not self.subj:
+            self.subj = RealSubject(self.filename)
+        return self.subj.set_content(content)
+
+
+# 代理(保护代理，在实体的某些接口上二次开发，可以用在权限划分上)
+class ProtectedProxy(Subject):
+    def __init__(self, filename):
+        self.filename = filename
+        self.subj = None
+
+    def get_content(self):
+        if not self.subj:
+            self.subj = RealSubject(self.filename)
+        return self.subj.get_content()
+
+    def set_content(self, content=None):
+        print("我要在这里加一些操作")
+        raise PermissionError("无写入权限")
+
+
+print(VirtualProxy("代理模式创建的超级无敌大文件.txt").set_content("哎呀，你干嘛～～"))
+print(VirtualProxy("代理模式创建的超级无敌大文件.txt").get_content())
+
+print(ProtectedProxy("代理模式创建的超级无敌大文件.txt").set_content())
+print(ProtectedProxy("代理模式创建的超级无敌大文件.txt").get_content())
+
+"""
+优点:
+远程代理:可以隐藏对象位于远程地址空间的事实
+虚代理:可以进行优化，例如根据要求创建对象
+保护代理:允许在访问一个对象时有一些附加的内务处理
+"""
