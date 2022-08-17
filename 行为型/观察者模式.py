@@ -1,3 +1,6 @@
+# 这个发布订阅（观察者）模式学学思路就行了，看完会觉得很巧妙，但是在一个大系统里还是乖乖的
+# 用数据库存订阅者发布者信息吧，因为这个设计模式的实现太依赖observers列表了，
+# 也就是说会非常占内存，想想一个网站有了几万用户，那个时候内存大概率爆炸
 """
 内容:
 定义对象间的一种一对多的依赖关系,当一个对象的状态发生改变时,所有依赖于它的对象
@@ -15,7 +18,6 @@
 当一个对象必须通知其它对象，而它又不能假定其它对象是谁。换言之，你不希望这些对象是紧密耦合的。
 
 """
-
 
 from abc import ABCMeta, abstractmethod
 
@@ -66,7 +68,6 @@ class StaffNotice(Notice):
             obs.update(info)  # 发布者调用订阅者内的方法，订阅者索取消息
 
 
-
 # 具体订阅者
 class Staff(Observer):
     def __init__(self):
@@ -95,7 +96,7 @@ print(s1.company_info, s2.company_info)
 目标和观察者之间的抽象耦合最小
 支持广播通信"""
 
-#原始复杂版，学一下python基础用法还是可以的
+# 原始复杂版，学一下python基础用法还是可以的
 """
 class Observer(metaclass=ABCMeta):  # 抽象订阅者
     @abstractmethod
@@ -152,12 +153,3 @@ notice.attach(s1)
 notice.attach(s2)
 notice.company_info = "公司今年业绩非常好，给大家发奖金!!!"
 print(s1.company_info)"""
-
-
-
-
-
-
-
-
-
